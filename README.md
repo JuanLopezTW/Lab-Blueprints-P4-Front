@@ -1,7 +1,9 @@
 # BluePrints P4 — Backend (REST + Tiempo Real con STOMP)
 
 **Integrantes:** Juan Manuel López Barrera - Laura Valentina Santiago Marquez
+
 **Repo front:** _[link]_
+
 **Enunciado:** https://github.com/DECSIS-ECI/Lab_P4_BluePrints_RealTime-Sokets
 
 Backend Spring Boot 3 (Java 21) que expone la API CRUD de planos (protegida con JWT/OAuth2) y un canal de **tiempo real con STOMP sobre WebSocket**, para que varios clientes dibujen el mismo plano a la vez.
