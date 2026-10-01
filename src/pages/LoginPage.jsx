@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import api from '../services/apiClient.js'
+import api, { API_BASE } from '../services/apiClient.js'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
@@ -10,7 +10,7 @@ export default function LoginPage() {
     e.preventDefault()
     setError(null)
     try {
-      const { data } = await api.post('/auth/login', { username, password }, { baseURL: '/' })
+      const { data } = await api.post('/auth/login', { username, password }, { baseURL: API_BASE })
       localStorage.setItem('token', data.access_token)
       alert('Login exitoso')
     } catch (e) {
