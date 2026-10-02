@@ -1,5 +1,7 @@
 # Lab P4 — BluePrints en Tiempo Real (Sockets & STOMP)
 
+### Juan Manuel Lopez Barrera- Laura Valentina Santiago Marquez 
+
 > **Repositorio:** `DECSIS-ECI/Lab_P4_BluePrints_RealTime-Sokets`  
 > **Front:** React + Vite (Canvas, CRUD, y selector de tecnología RT)  
 > **Backends guía (elige uno o compáralos):**
@@ -131,6 +133,49 @@ En la interfaz: selecciona **Socket.IO** o **STOMP**, define `author` y `name`, 
 ```js
   client.subscribe(`/topic/blueprints.${author}.${name}`, (msg) => { /* append points y repintar */ })
 ```
+
+---
+
+## ✅ Lo que implementamos (equipo)
+
+**Tecnología RT elegida:** STOMP, porque el backend ya está en Spring Boot y se integra en el mismo proceso, reutilizando la seguridad, el CORS y la base de datos que ya existían (evita levantar un servidor Node aparte para Socket.IO).
+
+### Backend
+Repo: https://github.com/JuanLopezTW/Lab-Blueprints-P4-Back
+- Endpoint WebSocket: `ws://localhost:8080/ws-blueprints`
+- Publicar: `/app/draw` — Suscribirse: `/topic/blueprints.{author}.{name}`
+- Payload: `{ "author": "...", "name": "...", "point": { "x": 0, "y": 0 } }`
+- REST base: `/api/v1/blueprints`, protegido con JWT (`blueprints.read` / `blueprints.write`)
+
+### Frontend
+Repo: https://github.com/JuanLopezTW/Lab-Blueprints-P4-Front
+
+- `src/services/stompClient.js`: conexión WebSocket única compartida en toda la app, con reconexión automática.
+- `src/hooks/useRealtime.js`: hook que se suscribe al tópico del plano abierto y expone `sendPoint(point)` para publicar. Se desactiva si el modo RT está en "None" o no hay plano abierto.
+- `BlueprintCanvas.jsx`: se agregó el prop `onPointClick` para dibujar por clic, calculando las coordenadas reales según el tamaño del canvas en pantalla.
+- `apiClient.js`: se completó el CRUD con `addPoint` (`PUT .../points`) y `remove` (`DELETE ...`).
+- Selector RT con opciones **None** y **STOMP**, con indicador de estado de conexión en vivo (conectado / conectando).
+
+### Pruebas realizadas
+- Estado inicial del canvas al abrir un plano (GET).
+- Dibujo local por clic.
+- Colaboración en vivo verificada con dos pestañas en el mismo plano: los puntos se replican casi al instante.
+- Aislamiento por plano verificado: dibujar en un plano no afecta a pestañas con un plano distinto abierto.
+- CRUD completo (crear, abrir, dibujar, eliminar) funcionando y refrescando la tabla y el total de puntos.
+- Usuario `student` (solo lectura) recibe `403` al intentar dibujar, confirmando que el control de scopes sigue aplicando.
+
+### Pruebas unitarias nuevas (Vitest)
+- `useRealtime.test.js`: conexión condicionada por `enabled`, suscripción correcta, y `sendPoint` publicando el payload esperado.
+- `apiClient.test.js`: `addPoint` y `remove` llaman a las rutas REST correctas.
+- `BlueprintCanvas.test.jsx`: clic en el canvas calcula bien las coordenadas del punto.
+
+Todas las pruebas pasaron con `npm test`.
+
+![Resultado de npm test](docs/images/Punto8/resultado_tests.png)
+![Prueba de STOMP Conectado](docs/images/Punto8/stomp_funcionando.png)
+
+![Colaboración en vivo entre dos pestañas](docs/images/Punto8/Prueba_2Pestañas.mp4)
+
 
 ---
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-export default function BlueprintCanvas({ points = [], width = 520, height = 360 }) {
+export default function BlueprintCanvas({ points = [], width = 520, height = 360, onPointClick }) {
   const ref = useRef(null)
 
   useEffect(() => {
@@ -43,18 +43,31 @@ export default function BlueprintCanvas({ points = [], width = 520, height = 360
     }
   }, [points])
 
+  const handleClick = (e) => {
+    if (!onPointClick) return
+    const canvas = ref.current
+    const rect = canvas.getBoundingClientRect()
+    const scaleX = canvas.width / rect.width
+    const scaleY = canvas.height / rect.height
+    const x = Math.round((e.clientX - rect.left) * scaleX)
+    const y = Math.round((e.clientY - rect.top) * scaleY)
+    onPointClick({ x, y })
+  }
+
   return (
     <canvas
       id="blueprint-canvas"
       ref={ref}
       width={width}
       height={height}
+      onClick={handleClick}
       style={{
         background: '#0b1220',
         border: '1px solid #334155',
         borderRadius: 12,
         width: '100%',
         maxWidth: width,
+        cursor: onPointClick ? 'crosshair' : 'default',
       }}
     />
   )

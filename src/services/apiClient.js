@@ -69,6 +69,19 @@ export const apiclient = {
     const { data } = await api.post('/blueprints', blueprint)
     return data.data
   },
+  async addPoint(author, name, point) {
+    const { data } = await api.put(
+      `/blueprints/${encodeURIComponent(author)}/${encodeURIComponent(name)}/points`,
+      point,
+    )
+    return data.data
+  },
+  async remove(author, name) {
+    const { data } = await api.delete(
+      `/blueprints/${encodeURIComponent(author)}/${encodeURIComponent(name)}`,
+    )
+    return data.data
+  },
 }
 
 export default api
